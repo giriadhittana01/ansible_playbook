@@ -5,6 +5,7 @@
   pre_tasks:
 
   - name: install updates (Ubuntu)
+    tags: always
     apt:
       upgrade: dist
       update_cache: yes
@@ -16,6 +17,7 @@
   tasks:
 
   - name: install apache package and add php support for apache
+    tags: apache,apache2,ubuntu
     package:
       name: 
         - "{{ apache_package }}"
@@ -29,6 +31,7 @@
   tasks:
 
   - name: install mariadb package (Ubuntu)
+    tags: db,maria,ubuntu
     package:
       name: 
         - "{{ mariadb_package }}"

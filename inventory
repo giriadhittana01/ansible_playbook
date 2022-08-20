@@ -1,2 +1,5 @@
+[web_servers]
 103.183.75.39 ansible_ssh_user=giriputraadhittana01 apache_package=apache2 php_package=libapache2-mod-php
-103.63.25.132 ansible_ssh_user=giriadhittana01 apache_package=apache2 php_package=libapache2-mod-php
+
+[db_servers]
+103.63.25.132 ansible_ssh_user=giriadhittana01 mariadb_package=mariadb-server

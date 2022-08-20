@@ -1,0 +1,37 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install updates (Ubuntu)
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+
+- hosts: web_servers
+  become: true
+  tasks:
+
+  - name: install apache package and add php support for apache
+    package:
+      name: 
+        - "{{ apache_package }}"
+        - "{{ php_package }}"
+      state: latest
+      update_cache: yes
+    when: ansible_distribution in ["Ubuntu","Debian"] and ansible_distribution_version == "22.04"
+
+- hosts: db_servers
+  become: true
+  tasks:
+
+  - name: install mariadb package (Ubuntu)
+    package:
+      name: 
+        - "{{ mariadb_package }}"
+      state: latest
+      update_cache: yes
+    when: ansible_distribution in ["Ubuntu","Debian"] and ansible_distribution_version == "22.04"

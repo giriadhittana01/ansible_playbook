@@ -3,3 +3,7 @@
 
 [db_servers]
 103.63.25.132 ansible_ssh_user=giriadhittana01 mariadb_package=mariadb-server
+
+[workstations]
+103.183.75.39 ansible_ssh_user=giriputraadhittana01
+103.63.25.132 ansible_ssh_user=giriadhittana01

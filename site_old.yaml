@@ -1,0 +1,95 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install updates (Ubuntu)
+    tags: always
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+  
+  - name: copy default html files for site
+    tags: apache,apache2,httpd
+    copy:
+      src: default_site.html
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: 0644
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: Create simone User
+    tags: always
+    user:
+      name: simone
+      groups: root
+  
+  - name: add ssh key for simone
+    tags: always
+    authorized_key:
+      user: simone
+      key: ""
+
+  - name: add ssh key for simone
+    tags: always
+    authorized_key:
+      user: simone
+      key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDQI2pdCWq8ds3f9CWhh+pKqbxxmFtOMBbPdXRnfFUQILNb7vBMFHjnVvyyZEXd7xuZsQx3cu95m5vR8I4kRg3qYOqFYeJPHfUpvwcHMz895Cgx3o6lX2rnRty4MVMd5jtaI7UWgDLoiVZ2uoXpgh/4qyQ1eu3KXS+jF5GEJzPbeCm13HWfLqlFQnWVXQdtKmH9ocNqnWZ1SDXkUuGTBm6x8VfDp9364V3VajOzS8GzlGXv5p7S9sAyRWmOqrPh9vgjtb0XOcDounSDpMLm77jo3Hc3btRRacGywz3D2MWhj3myo4dYzTVeyiqfdaIOFdP5QJzqHg8O1rep8yM49JzRgMN1mETWSy/ylBSRYfx5T0Yf8cbWf+RCb5gYbhYD5Jyjhp9W2gUytbpWdw+xuGORbaGP4K5GLJp00ikjPGhqEz0pTRrsKAgi2gNFNzuBxBMoD0Vm230UbFd1lfeyEw9byy0CqxVPHRAyuYMzurJSBBOCWcEJVFUutPSKLVM7NVM= giri.adhittana@BA-00024762.local"
+
+  - name: add sudoers file for simone
+    tags: always
+    copy:
+      src: sudoers_simone
+      dest: /etc/sudoers.d/simone
+      owner: root
+      group: root
+  
+- hosts: workstations
+  become: true
+  tasks:
+
+  - name: install unzip
+    package:
+      name: unzip
+
+  - name: install terraform
+    unarchive:
+      src: https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip
+      dest: /usr/local/bin
+      remote_src: yes
+      mode: 0755
+      owner: root
+      group: root
+
+- hosts: web_servers
+  become: true
+  tasks:
+
+  - name: install apache package and add php support for apache
+    tags: apache,apache2,ubuntu
+    package:
+      name: 
+        - "{{ apache_package }}"
+        - "{{ php_package }}"
+      state: latest
+      update_cache: yes
+    when: ansible_distribution in ["Ubuntu","Debian"] and ansible_distribution_version == "22.04"
+
+- hosts: db_servers
+  become: true
+  tasks:
+
+  - name: install mariadb package (Ubuntu)
+    tags: db,maria,ubuntu
+    package:
+      name: 
+        - "{{ mariadb_package }}"
+      state: latest
+      update_cache: yes
+    when: ansible_distribution in ["Ubuntu","Debian"] and ansible_distribution_version == "22.04"

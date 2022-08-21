@@ -1,0 +1,2 @@
+ansible_ssh_user: giriadhittana01
+mariadb_package: mariadb-server
